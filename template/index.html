@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="{%  static 'css/style.css' %}" type="text/css" />
+	<title>Nano-Folio</title>
+</head>
+<body>
+	<section id="spotlight">
+		<section class="wrapper">
+			<div class="contents">
+				<div class="heart-shape">
+					<span>&#10084;</span>
+				</div>
+				<h1>Nano Folio</h1>
+			</div>
+		</section>
+	</section>
+
+    <section id="about">
+        <section class="wrapper">
+            <div class="container">
+                <div class="left">
+                    <div class="icon">
+                        <img src="{{details.image.url}}" alt="Image" />
+                    </div>
+                    <h3>
+                        {{details.title}}
+                    </h3>
+                </div>
+                <div class="right">
+                    <p>
+                        {{details.description}}
+                    </p>
+                    <p>
+                        {{details.description}}
+                    </p>
+                </div>
+            </div>
+        </section>
+    </section>
+
+	<section id="gallery">
+		<section class="wrapper">
+		  <div class="top">
+			<ul>
+				<li>
+					<a href="{% url 'web:category' %}?category=All"  target="blank" class="active">Show All</a>
+				</li>
+				{% for category_name in categories %}
+					<li>
+						<a href="{% url 'web:category' %}?category={{category_name.name}}"  target="blank" class="active">{{category_name.name}}</a>
+					</li>
+			  	{% endfor %}
+			</ul>
+		  </div>
+		  
+		  <div class="bottom">
+			{% for gallery in galleries %}
+			<div class="frame"><img src="{{gallery.image.url}}" alt="Image" /></div>
+			{% endfor %}
+
+		  </div>
+		</section>
+	  </section>
+
+	  <footer>
+		<section class="wrapper">
+			<form action="{% url 'web:contact' %}"
+				  method="post"
+				  class="ajax"
+			>
+			    {% csrf_token %}
+				<input type="text" name="name" placeholder="name" />
+				<input type="email" name="email" placeholder="email" />
+				<textarea name="message" id="" cols="30" rows="5" placeholder="message"></textarea>
+				<input type="submit" name="submit" value="send" />
+			</form>
+			<div class="middle">
+				<p class="paragraph">
+					120 curabitor sed tortur ultrices,congue odio eget,poseuro urna.prasent at rhonscus 1980.
+				</p>
+				<p class="tel">
+					Tel:010-020-0340
+				</p>
+				<ul>
+					<li class="social">
+						<a href="#" >
+							<img src="{% static 'img/facebook-brands.svg' %}" alt="Social Media">
+						</a>
+					</li>
+					<li class="social">
+						<a href="#" >
+							<img src="{% static 'img/twitter-brands.svg' %}" alt="Social Media">
+						</a>
+					</li>
+					<li class="social">
+						<a href="#" >
+							<img src="{% static 'img/instagram-brands.svg' %}" alt="Social Media">
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="right">
+				<div class="img_container">
+					<img src="{% static 'img/searchengin-brands.svg' %}" alt="Lens">
+				</div>
+				<p>Contact</p>
+			</div>
+		</section>
+		<p class="footer">
+			Copyright 2020 Nano Folio  - Design Tooplate
+		</p>
+		
+	</footer>
+	<script src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
+	<script src="{% static 'js/sweetalert2@11.js' %}"></script>
+	<script src="{% static 'js/script.js' %}"></script>
+	<script>
+		$('#gallery .top a').on('click', function(e){
+			e.preventDefault();
+			var $this = $(this);
+			var url = $this.attr("href")
+			console.log("sdddddddddddddddd");
+			
+			$.ajax({
+				type:"GET",
+				url:url,
+				data: $(this).serialize(),
+				dataType:"json",
+				success: function(data) {
+					var r_data = data.response_data.data
+					let html_data = ""
+					r_data.forEach((gallery_data) => {
+						html_data += `<div class="frame"><img src="media/${gallery_data.image}" alt="Image" /></div>`
+						console.log(gallery_data);
+					})
+					$(".bottom").html(html_data)
+				},
+				failure: function(data) { 
+					alert('Got an error dude');
+				},
+				processData:false,
+				contentType:false,
+				cache:false,
+			})
+		});  
+	</script>
+</body>
+</html>
